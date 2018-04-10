@@ -73,9 +73,9 @@ class StatsCache(object):
     def dump_stats(self):
         logging.warn("*" * 80)
         self.graph_time_to_deanon()
-        #self.graph_time_to_g2()
+        self.graph_time_to_g2()
         self.graph_time_to_g3()
-        self.graph_remaining_g2_times()
+#        self.graph_remaining_g2_times()
 
     def graph_time_to_deanon(self):
         times_list = []
@@ -88,6 +88,21 @@ class StatsCache(object):
                 times_list.append(0)
 
         grapher.graph_time_to_guard(times_list, layer_num=1,
+                                    experiment_descr=self.experiment_descr,
+                                    text_info=self.experiment_params)
+
+    def graph_time_to_g2(self):
+        times_list = []
+
+        for sim in self.simulation_runs:
+
+            if sim.time_to_g2:
+                hours = sim.time_to_g2 // 3600
+                times_list.append(hours)
+            else:
+                times_list.append(0)
+
+        grapher.graph_time_to_guard(times_list, layer_num=2,
                                     experiment_descr=self.experiment_descr,
                                     text_info=self.experiment_params)
 
