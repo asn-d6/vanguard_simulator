@@ -12,11 +12,12 @@ This file introduces adversary models and functionality.
 SYBIL_PROBS = {
     "weak" : (0.02, 0.05, 0.05),
     "medium" : (0.05, 0.07, 0.07),
-    "hard" : (0.07, 0.12, 0.12)
+    "hard" : (0.07, 0.12, 0.12),
+    "hell" : (0.10, 0.15, 0.15)
     }
 
 # Three types of pwnage adversary: basic, APT, FVEY (see get_pwnage_time_*() functions below)
-PWNAGE_MODELS = ("none", "basic", "APT", "FVEY")
+PWNAGE_MODELS = ("none", "basic", "APT", "FVEY", "rubberhose1", "rubberhose2")
 
 class Adversary(object):
     """
@@ -110,6 +111,10 @@ class Adversary(object):
             return self.get_pwnage_time_apt(guard)
         elif (self.pwnage_type == "FVEY"):
             return self.get_pwnage_time_FVEY(guard)
+        elif (self.pwnage_type == "rubberhose1"):
+            return self.get_pwnage_time_rh1(guard)
+        elif (self.pwnage_type == "rubberhose2"):
+            return self.get_pwnage_time_rh2(guard)
 
     def get_pwnage_time_basic(self, guard):
         """
@@ -177,6 +182,43 @@ class Adversary(object):
                      guard.nickname, time_to_pwnage/3600)
 
         return now + time_to_pwnage
+
+    def get_pwnage_time_rh1(self, guard):
+        """
+        Rubberhose 1: Takes 2 days for the thugs to show up, which rises to 50% within 2 weeks
+        """
+        now = self.state.get_time()
+        roll = random.random()
+
+        if (roll > 0.5):
+            logging.info("\t %s has too many guards of its own for thugs", guard.nickname)
+            return -1
+
+        time_to_pwnage = 60*60*24*2 + 60*60*24*12 * float(roll)
+
+        logging.info("\t %s will get pwned in %d hours",
+                     guard.nickname, time_to_pwnage/3600)
+
+        return now + time_to_pwnage
+
+    def get_pwnage_time_rh2(self, guard):
+        """
+        Rubberhose 1: Takes 1 week for the thugs to show up, which rises to 50% within 3 weeks
+        """
+        now = self.state.get_time()
+        roll = random.random()
+
+        if (roll > 0.5):
+            logging.info("\t %s has too many guards of its own for thugs", guard.nickname)
+            return -1
+
+        time_to_pwnage = 60*60*24*7 + 60*60*24*14 * float(roll)
+
+        logging.info("\t %s will get pwned in %d hours",
+                     guard.nickname, time_to_pwnage/3600)
+
+        return now + time_to_pwnage
+
 
     def game_won(self):
         """We just won the game!"""
