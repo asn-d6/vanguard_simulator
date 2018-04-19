@@ -16,7 +16,7 @@ SYBIL_PROBS = {
     }
 
 # Three types of pwnage adversary: basic, APT, FVEY (see get_pwnage_time_*() functions below)
-PWNAGE_MODELS = ("basic", "APT", "FVEY")
+PWNAGE_MODELS = ("none", "basic", "APT", "FVEY")
 
 class Adversary(object):
     """
@@ -102,7 +102,9 @@ class Adversary(object):
         # Dig into the adversary dictionary and get the sybil probs for this adversary type
         assert(self.pwnage_type in PWNAGE_MODELS)
 
-        if (self.pwnage_type == "basic"):
+        if (self.pwnage_type == "none"):
+            return -1
+        elif (self.pwnage_type == "basic"):
             return self.get_pwnage_time_basic(guard)
         elif (self.pwnage_type == "APT"):
             return self.get_pwnage_time_apt(guard)
