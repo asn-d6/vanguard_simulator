@@ -14,7 +14,8 @@ do
         for topology in $topology_models
         do
             echo "Now doing:" $topology $pwnage $sybil
-            python vanguard_sim.py $topology $sybil $pwnage
+            pypy vanguard_sim.py $topology $sybil $pwnage
+            python stats.py
         done
     done
 done

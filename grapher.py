@@ -1,7 +1,3 @@
-import numpy as np
-from numpy.random import randn
-import pandas as pd
-from scipy import stats
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -15,7 +11,6 @@ keeping through this simulation
 
 def init_graph_style():
     sns.set_palette("pastel", desat=.6)
-    np.random.seed(9221999)
 
 def graph_time_to_guard(times_list, layer_num, experiment_descr, text_info):
     """Graph time to guard discovery"""
@@ -61,7 +56,7 @@ def graph_remaining_g2_times(times_list, experiment_descr, text_info):
     ax.set_xlabel("Remaining g2 lifetime in hours ")
     ax.set_ylabel("Probability of remaining lifetime")
 
-    ax.set_xticks(np.arange(min(times_list), max(times_list)+1, 10.0))
+    ax.set_xticks(range(min(times_list), max(times_list)+1, 10.0))
 
     ax.hist(times_list, bins=100, cumulative=True, normed=1)
     sns.rugplot(times_list)
