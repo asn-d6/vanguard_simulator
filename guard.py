@@ -37,7 +37,12 @@ class Guard(object):
         # When will this guard rotate?
         self.rotation_time = self.get_rotation_time()
 
-        # Can the adversary see this guard?
+        # Is this guard in the adversary's line of sight?
+        # If this Guard is targetted, this variable contains the Guard that got
+        # compromised and allowed the adversary to target this guard (e.g. if
+        # this is a targetted L1 guard, this variable contains the L2 guard
+        # that allowed the adversary to target it).
+        # If this guard is not targetted, this variable is False.
         self.is_targetted = self.is_targetted_func()
         if self.is_targetted:
             logging.info("\t %s is targetted", self)
@@ -73,7 +78,7 @@ class Guard(object):
         # see if any are compromised
         for guard in prev_guard_layer.guards:
             if guard.is_compromised:
-                logging.info("\t targetted because compromised prev guard")
+                logging.info("\t targetted because compromised prev guard (%s)", guard)
                 return guard
 
         return False
