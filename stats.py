@@ -24,23 +24,27 @@ class StatsCache(object):
     def finalize_experiment(self):
         """
         We just finished all the simulation runs. Finalize the experiment by
-        running various calculations accross simulation runs (e.g. average
+        running various calculations across simulation runs (e.g. average
         times to deanonymization, etc.)
         """
+        # Helper function to convert None items in lists to 0
+        def convert_none_to_zero(item):
+            return 0 if item is None else item
+
         guard_rotations_all = [x.total_guard_rotations for x in self.simulation_runs]
-        guard_rotations_all = filter(None, guard_rotations_all) # remove any Nones out of there
+        guard_rotations_all = map(convert_none_to_zero, guard_rotations_all) # turn those Nones to zeroes
         self.avg_guard_rotations = sum(guard_rotations_all) / len(guard_rotations_all)
 
         time_to_g1_all = [x.time_to_g1 for x in self.simulation_runs]
-        time_to_g1_all = filter(None, time_to_g1_all) # remove any Nones out of there
+        time_to_g1_all = map(convert_none_to_zero, time_to_g1_all)
         self.avg_secs_to_deanon = sum(time_to_g1_all) / len(time_to_g1_all)
 
         time_to_g2_all = [x.time_to_g2 for x in self.simulation_runs]
-        time_to_g2_all = filter(None, time_to_g2_all) # remove any Nones out of there
+        time_to_g2_all = map(convert_none_to_zero, time_to_g2_all)
         self.avg_secs_to_guard_discovery = sum(time_to_g2_all) / len(time_to_g2_all)
 
         time_to_g3_all = [x.time_to_g3 for x in self.simulation_runs]
-        time_to_g3_all = filter(None, time_to_g3_all) # remove any Nones out of there
+        time_to_g3_all = map(convert_none_to_zero, time_to_g3_all)
         self.avg_secs_to_g3 = sum(time_to_g3_all) / len(time_to_g3_all)
 
     def dump_experiment_parameters(self):
