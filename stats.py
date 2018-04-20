@@ -16,6 +16,8 @@ class StatsCache(object):
     def __init__(self, topology, sybil_model, pwnage_model):
         self.experiment_descr = "%s_%s_%s" % (topology, sybil_model, pwnage_model)
         self.simulation_runs = []
+        self.experiment_start_time = time.time()
+        self.experiment_duration = None
 
     def register_run(self, run_state):
         self.simulation_runs.append(run_state)
@@ -47,6 +49,9 @@ class StatsCache(object):
         time_to_g3_all = map(convert_none_to_zero, time_to_g3_all)
         self.avg_secs_to_g3 = sum(time_to_g3_all) / len(time_to_g3_all)
 
+        # Calculate experiment duration
+        self.experiment_duration = time.time() - self.experiment_start_time
+
     def dump_experiment_parameters(self):
         """Dump the various parameters of our experiment"""
         timestr = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -58,7 +63,7 @@ class StatsCache(object):
         # variable so that it's used by the graphing func too
         self.experiment_params = "Experiment parameters:\n"
         self.experiment_params += "="*60 + "\n"
-        self.experiment_params += "Date: %s\n" % timestr
+        self.experiment_params += "Date: %s (duration: %d secs)\n" % (timestr, self.experiment_duration)
         self.experiment_params += "Simulation rounds: %d\n" % len(self.simulation_runs)
         self.experiment_params += guard.dump_parameters()
         self.experiment_params += topology.dump_parameters()
