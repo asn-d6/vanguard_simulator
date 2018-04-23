@@ -65,9 +65,7 @@ def start():
         run_full_simulation(stats_cache, topology, sybil_model, pwnage_model)
 
     # Dump the stats we've all been waiting for
-    stats_cache.dump_experiment_parameters()
-
-    stats_cache.dump_stats()
+    stats_cache.finalize_experiment()
 
 def run_full_simulation(stats_cache, topology, sybil_model, pwnage_model):
     """

@@ -24,12 +24,25 @@ class StatsCache(object):
         logging.warn("Registered %d run" % len(self.simulation_runs))
 
     def finalize_experiment(self):
+        """The experiment is over. Finalize data and start graphing!"""
+        # Get the experiment duration
+        self.experiment_duration = time.time() - self.experiment_start_time
+
+        # Normalize and finalize the data we kept
+        self.finalize_stats_data()
+        # Save experiment parameters so that we can dump them in our graphs
+        self.save_experiment_parameters()
+
+        self.graph_stats()
+
+    def finalize_stats_data(self):
         """
         We just finished all the simulation runs. Finalize the experiment by
         running various calculations across simulation runs (e.g. average
         times to deanonymization, etc.)
         """
-        # Helper function to convert None items in lists to 0
+        # Helper function to convert None items in lists to 0 so that we can
+        # calculate averages correctly.
         def convert_none_to_zero(item):
             return 0 if item is None else item
 
@@ -49,15 +62,9 @@ class StatsCache(object):
         time_to_g3_all = map(convert_none_to_zero, time_to_g3_all)
         self.avg_secs_to_g3 = sum(time_to_g3_all) / len(time_to_g3_all)
 
-        # Calculate experiment duration
-        self.experiment_duration = time.time() - self.experiment_start_time
-
-    def dump_experiment_parameters(self):
+    def save_experiment_parameters(self):
         """Dump the various parameters of our experiment"""
         timestr = time.strftime("%Y-%m-%d %H:%M:%S")
-
-        # First finalize this experiment
-        self.finalize_experiment()
 
         # Now format the global experiment parameters, and put them in a
         # variable so that it's used by the graphing func too
@@ -79,7 +86,7 @@ class StatsCache(object):
         logging.warn("="*80)
         logging.warn(self.experiment_params)
 
-    def dump_stats(self):
+    def graph_stats(self):
         logging.warn("*" * 80)
         self.graph_time_to_deanon()
         self.graph_time_to_g2()
