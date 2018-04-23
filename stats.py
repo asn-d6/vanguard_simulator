@@ -93,8 +93,6 @@ class StatsCache(object):
             if sim.time_to_g1:
                 hours = sim.time_to_g1 // 3600
                 times_list.append(hours)
-            else:
-                times_list.append(0)
 
         grapher.graph_time_to_guard(times_list, layer_num=1,
                                     experiment_descr=self.experiment_descr,
@@ -104,12 +102,9 @@ class StatsCache(object):
         times_list = []
 
         for sim in self.simulation_runs:
-
             if sim.time_to_g2:
                 hours = sim.time_to_g2 // 3600
                 times_list.append(hours)
-            else:
-                times_list.append(0)
 
         grapher.graph_time_to_guard(times_list, layer_num=2,
                                     experiment_descr=self.experiment_descr,
@@ -119,12 +114,9 @@ class StatsCache(object):
         times_list = []
 
         for sim in self.simulation_runs:
-
             if sim.time_to_g3:
                 hours = sim.time_to_g3 // 3600
                 times_list.append(hours)
-            else:
-                times_list.append(0)
 
         grapher.graph_time_to_guard(times_list, layer_num=3,
                                     experiment_descr=self.experiment_descr,
@@ -134,12 +126,9 @@ class StatsCache(object):
         times_list = []
 
         for sim in self.simulation_runs:
-
             for remaining_g2_time in sim.times_left_for_g2_rotation:
                 hours = remaining_g2_time // 3600
                 times_list.append(hours)
-            else:
-                times_list.append(0)
 
         grapher.graph_remaining_g2_times(times_list,
                                          experiment_descr=self.experiment_descr,
