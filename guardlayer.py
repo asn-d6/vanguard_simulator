@@ -9,12 +9,13 @@ A guard layer is a set of guards with their own own rotation times.
 """
 
 class GuardLayer(object):
-    def __init__(self, layer_num, num_guards, topology, adversary, state):
+    def __init__(self, layer_num, num_guards, topology, adversary, guard_lifetime_type, state):
         self.layer_num = layer_num
         self.topology = topology
         self.adversary = adversary
         self.num_guards = num_guards
         self.state = state
+        self.guard_lifetime_type = guard_lifetime_type
 
         self.guards = []
 
@@ -36,7 +37,8 @@ class GuardLayer(object):
     def add_new_guard(self):
         """Add new guard to this guard layer"""
         new_guard_nick = util.get_guard_name()
-        new_guard = guard.Guard(new_guard_nick, self, self.topology, self.adversary, self.state)
+        new_guard = guard.Guard(new_guard_nick, self, self.topology, self.adversary,
+                                self.guard_lifetime_type, self.state)
         self.guards.append(new_guard)
         return new_guard
 

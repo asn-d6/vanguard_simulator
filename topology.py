@@ -14,9 +14,10 @@ class Topology(object):
 
     A Topology is basically a bunch of GuardLayers connected with each other.
     """
-    def __init__(self, adversary, state, topology_str):
+    def __init__(self, adversary, state, topology_str, guard_lifetime_type):
         self.adversary = adversary
         self.state = state
+        self.guard_lifetime_type = guard_lifetime_type
 
         self.first_layer = None
         self.second_layer = None
@@ -50,11 +51,17 @@ class Topology(object):
         topology_config = self.get_topology_config_from_str(top_str)
 
         self.third_layer = guardlayer.GuardLayer(layer_num=3, num_guards=topology_config[2],
-                                                 topology=self, adversary=self.adversary, state=self.state)
+                                                 topology=self, adversary=self.adversary,
+                                                 guard_lifetime_type=self.guard_lifetime_type,
+                                                 state=self.state)
         self.second_layer = guardlayer.GuardLayer(layer_num=2, num_guards=topology_config[1],
-                                                  topology=self, adversary=self.adversary, state=self.state)
+                                                  topology=self, adversary=self.adversary,
+                                                  guard_lifetime_type=self.guard_lifetime_type,
+                                                  state=self.state)
         self.first_layer = guardlayer.GuardLayer(layer_num=1, num_guards=topology_config[0],
-                                                 topology=self, adversary=self.adversary, state=self.state)
+                                                 topology=self, adversary=self.adversary,
+                                                 guard_lifetime_type=self.guard_lifetime_type,
+                                                 state=self.state)
 
         self.third_layer.init_guards()
         self.second_layer.init_guards()

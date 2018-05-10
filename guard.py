@@ -4,10 +4,29 @@ import random
 # Rotation parameters
 FIRST_GUARD_ROTATION_MIN = 3 * 60*60*24*30 # three months
 FIRST_GUARD_ROTATION_MAX = 4 * 60*60*24*30 # four months
-SECOND_GUARD_ROTATION_MIN = 10 * 60*60*24 # ten days
-SECOND_GUARD_ROTATION_MAX = 12 * 60*60*24 # twelve days
-THIRD_GUARD_ROTATION_MIN = 10 * 60*60 # ten hours
-THIRD_GUARD_ROTATION_MAX = 14 * 60*60 # fourteen hours
+
+# for uniform distr
+UNIFORM_SECOND_GUARD_ROTATION_MIN = 10 * 60*60*24 # ten days
+UNIFORM_SECOND_GUARD_ROTATION_MAX = 12 * 60*60*24 # twelve days
+UNIFORM_THIRD_GUARD_ROTATION_MIN = 10 * 60*60 # ten hours
+UNIFORM_THIRD_GUARD_ROTATION_MAX = 14 * 60*60 # fourteen hours
+
+# for maxx
+MAXX_SECOND_GUARD_ROTATION_MIN = 1 * 60*60*24 # one day
+MAXX_SECOND_GUARD_ROTATION_MAX = 45 * 60*60*24 # 45 days
+MAXX_THIRD_GUARD_ROTATION_MIN = 1 * 60*60 # one hour
+MAXX_THIRD_GUARD_ROTATION_MAX = 48 * 60*60 # two days
+
+
+def sample_maxx(minimum, maximum):
+    """
+    Sample a value from the max(X,X) distribution, where X is a random variable
+    that takes on values from the uniform distribution between minimum and
+    maximum.
+    """
+    x1 = random.randint(minimum, maximum)
+    x2 = random.randint(minimum, maximum)
+    return max(x1,x2)
 
 class Guard(object):
     """
@@ -21,7 +40,7 @@ class Guard(object):
     (i.e. can see it) it targets it for pwnage, and sets a timer which upon
     expiration pwns the guard and compromises it.
     """
-    def __init__(self, nickname, guard_layer, topology, adversary, state):
+    def __init__(self, nickname, guard_layer, topology, adversary, lifetime_type, state):
         self.adversary = adversary
         self.nickname = nickname
         self.guard_layer = guard_layer
@@ -35,7 +54,10 @@ class Guard(object):
         self.is_sybiled = adversary.try_sybil(self)
 
         # When will this guard rotate?
-        self.rotation_time = self.get_rotation_time()
+        global lifetime_string
+        lifetime_string = lifetime_type
+
+        self.rotation_time = self.get_rotation_time(lifetime_type)
 
         # Is this guard in the adversary's line of sight?
         # If this Guard is targetted, this variable contains the Guard that got
@@ -83,19 +105,34 @@ class Guard(object):
 
         return False
 
-    def get_rotation_time(self):
+    def get_rotation_time(self, lifetime_type):
         now = self.state.get_time()
+
+        if lifetime_type == "uniform":
+            distribution_func = random.randint
+            second_guard_rotation_min = UNIFORM_SECOND_GUARD_ROTATION_MIN
+            second_guard_rotation_max = UNIFORM_SECOND_GUARD_ROTATION_MAX
+            third_guard_rotation_min = UNIFORM_THIRD_GUARD_ROTATION_MIN
+            third_guard_rotation_max = UNIFORM_THIRD_GUARD_ROTATION_MAX
+        elif lifetime_type == "maxx":
+            distribution_func = sample_maxx
+            second_guard_rotation_min = MAXX_SECOND_GUARD_ROTATION_MIN
+            second_guard_rotation_max = MAXX_SECOND_GUARD_ROTATION_MAX
+            third_guard_rotation_min = MAXX_THIRD_GUARD_ROTATION_MIN
+            third_guard_rotation_max = MAXX_THIRD_GUARD_ROTATION_MAX
+        else:
+            assert(0)
 
         # Get rotation delay depending on guard layer
         if self.layer_num == 1:
             rot_delay = random.randint(FIRST_GUARD_ROTATION_MIN,
                                        FIRST_GUARD_ROTATION_MAX)
         elif self.layer_num == 2:
-            rot_delay = random.randint(SECOND_GUARD_ROTATION_MIN,
-                                       SECOND_GUARD_ROTATION_MAX)
+            rot_delay = distribution_func(second_guard_rotation_min,
+                                          second_guard_rotation_max)
         elif self.layer_num == 3:
-            rot_delay = random.randint(THIRD_GUARD_ROTATION_MIN,
-                                       THIRD_GUARD_ROTATION_MAX)
+            rot_delay = distribution_func(third_guard_rotation_min,
+                                          third_guard_rotation_max)
         else:
             assert(False) # shouldn't be in here
 
@@ -134,9 +171,21 @@ class Guard(object):
         return False
 
 def dump_parameters():
+    if lifetime_string == "uniform":
+        second_guard_rotation_min = UNIFORM_SECOND_GUARD_ROTATION_MIN
+        second_guard_rotation_max = UNIFORM_SECOND_GUARD_ROTATION_MAX
+        third_guard_rotation_min = UNIFORM_THIRD_GUARD_ROTATION_MIN
+        third_guard_rotation_max = UNIFORM_THIRD_GUARD_ROTATION_MAX
+    elif lifetime_string == "maxx":
+        second_guard_rotation_min = MAXX_SECOND_GUARD_ROTATION_MIN
+        second_guard_rotation_max = MAXX_SECOND_GUARD_ROTATION_MAX
+        third_guard_rotation_min = MAXX_THIRD_GUARD_ROTATION_MIN
+        third_guard_rotation_max = MAXX_THIRD_GUARD_ROTATION_MAX
+
     params = "Guard lifetimes: (%d hours - %d hours), (%d hours - %d hours), (%d hours - %d hours)\n" % \
         (FIRST_GUARD_ROTATION_MIN / 3600, FIRST_GUARD_ROTATION_MAX / 3600,
-         SECOND_GUARD_ROTATION_MIN / 3600, SECOND_GUARD_ROTATION_MAX / 3600,
-         THIRD_GUARD_ROTATION_MIN / 3600, THIRD_GUARD_ROTATION_MAX / 3600)
-    # params += "Guard lifetime sampling logic: uniform, uniform, uniform\n"
+         second_guard_rotation_min / 3600, second_guard_rotation_max / 3600,
+         third_guard_rotation_min / 3600, third_guard_rotation_max / 3600)
+    params += "Guard lifetime sampling logic: uniform, %s, %s\n" % (lifetime_string, lifetime_string)
+
     return params

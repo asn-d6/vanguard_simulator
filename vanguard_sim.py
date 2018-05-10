@@ -30,6 +30,8 @@ DEFAULT_TOPOLOGY = "2-4-4"
 DEFAULT_ADVERSARY_SYBIL = "medium"
 DEFAULT_ADVERSARY_PWNAGE = "APT"
 
+DEFAULT_GUARD_LIFETIME_TYPE = "uniform"
+
 def parse_cmd_args():
     parser = argparse.ArgumentParser("vanguard_sim.py",
                                       formatter_class = argparse.ArgumentDefaultsHelpFormatter)
@@ -73,7 +75,7 @@ def run_full_simulation(stats_cache, topology, sybil_model, pwnage_model):
     """
 
     # Initialize simulation state
-    state = simulation.SimulationState(topology, sybil_model, pwnage_model)
+    state = simulation.SimulationState(topology, sybil_model, pwnage_model, DEFAULT_GUARD_LIFETIME_TYPE)
 
     # Run simulation until it's done and then handle results
     try:

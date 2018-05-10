@@ -21,9 +21,10 @@ class SimulationState(object):
     adversary gets to compromise G1 (i.e. deanonymize the onion service) , the
     simulation is over.
     """
-    def __init__(self, topology_model, sybil_model, pwnage_model):
+    def __init__(self, topology_model, sybil_model, pwnage_model, guard_lifetime_type):
         self.adversary = adversary.Adversary(self, sybil_model, pwnage_model)
         self.topology_model = topology_model
+        self.guard_lifetime_type = guard_lifetime_type
 
         self.topology = None
 
@@ -44,7 +45,7 @@ class SimulationState(object):
         return self.time
 
     def start_simulation(self):
-        self.topology = topology.Topology(self.adversary, self, self.topology_model)
+        self.topology = topology.Topology(self.adversary, self, self.topology_model, self.guard_lifetime_type)
 
     def move_simulated_time_forward(self):
         """
