@@ -10,10 +10,11 @@ This file introduces adversary models and functionality.
 # supposed to be more trusted (have been around for longer) than random middle
 # nodes
 SYBIL_PROBS = {
-    "weak" : (0.02, 0.05, 0.05),
-    "medium" : (0.05, 0.07, 0.07),
-    "hard" : (0.07, 0.12, 0.12),
-    "hell" : (0.10, 0.15, 0.15)
+    "tiny" : (0.01, 0.01, 0.01),
+    "weak" : (0.02, 0.02, 0.02),
+    "medium" : (0.05, 0.05, 0.05),
+    "hard" : (0.07, 0.07, 0.07),
+    "hell" : (0.10, 0.10, 0.10)
     }
 
 # Three types of pwnage adversary: basic, APT, FVEY (see get_pwnage_time_*() functions below)
