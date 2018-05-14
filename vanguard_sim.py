@@ -46,6 +46,9 @@ def parse_cmd_args():
                         choices=adversary.PWNAGE_MODELS,
                         default=DEFAULT_ADVERSARY_PWNAGE,
                         help="Adversary Pwnage attack strength")
+    parser.add_argument("--stop-at-guard-discovery", action='store_true',
+                        default=False, dest='stop_at_guard_discovery',
+                        help="Stop simulation at guard discovery instead of compromising G1.")
 
     return parser.parse_args()
 
@@ -60,22 +63,24 @@ def start():
     topology = args.topology
     sybil_model = args.sybil_model
     pwnage_model = args.pwnage_model
+    stop_at_guard_discovery = args.stop_at_guard_discovery
 
     stats_cache = stats.StatsCache(topology, sybil_model, pwnage_model)
 
     for i in xrange(NUM_SIMULATIONS):
-        run_full_simulation(stats_cache, topology, sybil_model, pwnage_model)
+        run_full_simulation(stats_cache, topology, sybil_model, pwnage_model, stop_at_guard_discovery)
 
     # Dump the stats we've all been waiting for
     stats_cache.finalize_experiment()
 
-def run_full_simulation(stats_cache, topology, sybil_model, pwnage_model):
+def run_full_simulation(stats_cache, topology, sybil_model, pwnage_model, stop_at_guard_discovery):
     """
     Start and complete a simulation run, then when it's done handle its results.
     """
 
     # Initialize simulation state
-    state = simulation.SimulationState(topology, sybil_model, pwnage_model, DEFAULT_GUARD_LIFETIME_TYPE)
+    state = simulation.SimulationState(topology, sybil_model, pwnage_model,
+                                       DEFAULT_GUARD_LIFETIME_TYPE, stop_at_guard_discovery)
 
     # Run simulation until it's done and then handle results
     try:

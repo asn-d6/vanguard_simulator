@@ -50,9 +50,13 @@ class StatsCache(object):
         guard_rotations_all = map(convert_none_to_zero, guard_rotations_all) # turn those Nones to zeroes
         self.avg_guard_rotations = sum(guard_rotations_all) / len(guard_rotations_all)
 
+        # This might be empty if --stop-at-guard-discovery was set
         time_to_g1_all = [x.time_to_g1 for x in self.simulation_runs]
-        time_to_g1_all = map(convert_none_to_zero, time_to_g1_all)
-        self.avg_secs_to_deanon = sum(time_to_g1_all) / len(time_to_g1_all)
+        if time_to_g1_all:
+            time_to_g1_all = map(convert_none_to_zero, time_to_g1_all)
+            self.avg_secs_to_deanon = sum(time_to_g1_all) / len(time_to_g1_all)
+        else:
+            self.avg_secs_to_deanon = 0
 
         time_to_g2_all = [x.time_to_g2 for x in self.simulation_runs]
         time_to_g2_all = map(convert_none_to_zero, time_to_g2_all)
@@ -88,7 +92,8 @@ class StatsCache(object):
 
     def graph_stats(self):
         logging.warn("*" * 80)
-        self.graph_time_to_deanon()
+        if self.avg_secs_to_deanon:
+            self.graph_time_to_deanon()
         self.graph_time_to_g2()
         self.graph_time_to_g3()
 #        self.graph_remaining_g2_times()

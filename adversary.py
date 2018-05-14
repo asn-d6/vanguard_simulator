@@ -31,11 +31,12 @@ class Adversary(object):
     pwn a guard. All these depend on the adversary model we have chosen (see
     ADVERSARIES dictionary above).
     """
-    def __init__(self, state, sybil_model, pwnage_model):
+    def __init__(self, state, sybil_model, pwnage_model, stop_at_guard_discovery):
         self.state = state
 
         self.sybil_type = sybil_model
         self.pwnage_type = pwnage_model
+        self.stop_at_guard_discovery = stop_at_guard_discovery
 
         # Terrible hack for dump_parameters (the adversary type is static for the whole experiment)
         global adversary_string
@@ -52,8 +53,13 @@ class Adversary(object):
 
         self.state.stats_count_guard_compromise(compromised_guard)
 
-        # If it's an L1 guard, the adversary won!
+        # If it's an L1 guard, the adversary won!  Also if the optional flag
+        # stop_at_guard_discovery is set, then the adversary wins at guard
+        # discovery.
         if compromised_guard.layer_num == 1:
+            self.game_won()
+            raise AdversaryWon
+        elif self.stop_at_guard_discovery and compromised_guard.layer_num == 2:
             self.game_won()
             raise AdversaryWon
 

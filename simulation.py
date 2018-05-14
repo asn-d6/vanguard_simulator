@@ -21,8 +21,8 @@ class SimulationState(object):
     adversary gets to compromise G1 (i.e. deanonymize the onion service) , the
     simulation is over.
     """
-    def __init__(self, topology_model, sybil_model, pwnage_model, guard_lifetime_type):
-        self.adversary = adversary.Adversary(self, sybil_model, pwnage_model)
+    def __init__(self, topology_model, sybil_model, pwnage_model, guard_lifetime_type, stop_at_guard_discovery):
+        self.adversary = adversary.Adversary(self, sybil_model, pwnage_model, stop_at_guard_discovery)
         self.topology_model = topology_model
         self.guard_lifetime_type = guard_lifetime_type
 
@@ -138,11 +138,11 @@ class SimulationState(object):
         self.winning_path = str(g3) + " -> " + str(g2) + " -> " +  str(g1)
 
     def stats_dump(self):
-        assert(self.time_to_g1)
         logging.warn("=" * 80)
         logging.warn("Adversary '%s' won the game!", self.adversary)
         logging.warn("Guard rotations: %s" % str(self.total_guard_rotations))
-        logging.warn("Time to deanonymization: %d hours" % (self.time_to_g1 / 3600))
+        if self.time_to_g1:
+            logging.warn("Time to deanonymization: %d hours" % (self.time_to_g1 / 3600))
         if self.time_to_g2:
             logging.warn("Time to guard discovery: %d hours" % (self.time_to_g2 / 3600))
         if self.time_to_g3:
