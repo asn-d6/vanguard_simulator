@@ -47,6 +47,9 @@ class SimulationState(object):
     def start_simulation(self):
         self.topology = topology.Topology(self.adversary, self, self.topology_model, self.guard_lifetime_type)
 
+        # Handle node compromises here so that we can handle early Sybils.
+        self.topology.handle_node_compromises()
+
     def move_simulated_time_forward(self):
         """
         Move simulated time forward and check for any needed roattions or
@@ -102,17 +105,17 @@ class SimulationState(object):
 
     def set_time_to_g1(self, time):
         """We just learned a G1 node for the first time. Keep the time"""
-        if not self.time_to_g1:
+        if self.time_to_g1 is None:
             self.time_to_g1 = time
 
     def set_time_to_g2(self, time):
         """We just learned a G2 node for the first time. Keep the time"""
-        if not self.time_to_g2:
+        if self.time_to_g2 is None:
             self.time_to_g2 = time
 
     def set_time_to_g3(self, time):
         """We just learned a G3 node for the first time. Keep the time"""
-        if not self.time_to_g3:
+        if self.time_to_g3 is None:
             self.time_to_g3 = time
 
     def register_new_pwnage(self, pwned_guard):

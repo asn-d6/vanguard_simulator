@@ -1,4 +1,5 @@
 import datetime
+import os
 import logging
 import random
 import time
@@ -100,7 +101,7 @@ def run_simulation_helper(state):
 
 def main():
     # Setup perfect randomness
-    random.seed(time.time())
+    random.seed(os.urandom(4))
 
     # Setup logging
     logger = logging.getLogger('')
