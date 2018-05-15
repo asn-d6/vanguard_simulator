@@ -96,15 +96,26 @@ class StatsCache(object):
             self.graph_time_to_deanon()
         self.graph_time_to_g2()
         self.graph_time_to_g3()
-#        self.graph_remaining_g2_times()
+
+    def normalize_time_for_graph(self, time_in_secs):
+        """
+        Given time_in_secs, check if it's a number and normalize it to hours so
+        that we can graph it.
+        """
+        if time_in_secs is not None:
+            # do ceiling division to distinguish 0 from others
+            hours = (time_in_secs + 3600 -1) // 3600
+            return hours
+        return None
 
     def graph_time_to_deanon(self):
         times_list = []
 
         for sim in self.simulation_runs:
-            if sim.time_to_g1:
-                hours = sim.time_to_g1 // 3600
-                times_list.append(hours)
+            hours = self.normalize_time_for_graph(sim.time_to_g1)
+            if hours is None:
+                continue
+            times_list.append(hours)
 
         grapher.graph_time_to_guard(times_list, layer_num=1,
                                     experiment_descr=self.experiment_descr,
@@ -114,9 +125,10 @@ class StatsCache(object):
         times_list = []
 
         for sim in self.simulation_runs:
-            if sim.time_to_g2:
-                hours = sim.time_to_g2 // 3600
-                times_list.append(hours)
+            hours = self.normalize_time_for_graph(sim.time_to_g2)
+            if hours is None:
+                continue
+            times_list.append(hours)
 
         grapher.graph_time_to_guard(times_list, layer_num=2,
                                     experiment_descr=self.experiment_descr,
@@ -126,9 +138,10 @@ class StatsCache(object):
         times_list = []
 
         for sim in self.simulation_runs:
-            if sim.time_to_g3:
-                hours = sim.time_to_g3 // 3600
-                times_list.append(hours)
+            hours = self.normalize_time_for_graph(sim.time_to_g3)
+            if hours is None:
+                continue
+            times_list.append(hours)
 
         grapher.graph_time_to_guard(times_list, layer_num=3,
                                     experiment_descr=self.experiment_descr,
