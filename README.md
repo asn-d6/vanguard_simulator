@@ -2,8 +2,9 @@
 
 This project roughly implements and simulates [Tor proposal
 247](https://gitweb.torproject.org/torspec.git/tree/proposals/247-hs-guard-discovery.txt)
-in an attempt to analyze the security properties of vanguards and optimize
-their parameters. It's meant to guide and consult the
+in an attempt to analyze the security properties of vanguards and [optimize
+their parameters](https://github.com/asn-d6/vanguard_simulator/wiki/Optimizing-vanguard-topologies).
+It's meant to guide and consult the
 [Vanguards](https://github.com/mikeperry-tor/vanguards) Tor controller.
 
 ## What is a vanguard simulation?
