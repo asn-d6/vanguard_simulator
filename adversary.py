@@ -138,7 +138,7 @@ class Adversary(object):
 
         # Now let's handle the pwnage within 15 days in a linear way
         maximum = 60*60*24*15
-        time_to_pwnage = maximum * float(roll)
+        time_to_pwnage = maximum * 2*  float(roll)
 
         logging.info("\t %s will get pwned in %d hours",
                      guard.nickname, time_to_pwnage/3600)
@@ -159,6 +159,8 @@ class Adversary(object):
         else:  # Handle the 100% within a month (so within 15 days to 30 days)
             minimum = 60*60*24*15
             maximum = 60*60*24*30
+            #we actually need to reroll here
+            roll = random.random()
             time_to_pwnage = minimum + (maximum - minimum) * float(roll)
 
         logging.info("\t %s will get pwned in %d hours",
@@ -182,6 +184,8 @@ class Adversary(object):
             maximum = 60*60*24*2
             time_to_pwnage = maximum * float(roll)
         elif (roll <= 0.75):
+            #also need to reroll here
+            roll = random.random()
             maximum = 60*60*24*7
             time_to_pwnage = maximum * float(roll)
 
@@ -201,7 +205,7 @@ class Adversary(object):
             logging.info("\t %s has too many guards of its own for thugs", guard.nickname)
             return -1
 
-        time_to_pwnage = 60*60*24*2 + 60*60*24*12 * float(roll)
+        time_to_pwnage = 60*60*24*2 + 60*60*24*12 * 2* float(roll)
 
         logging.info("\t %s will get pwned in %d hours",
                      guard.nickname, time_to_pwnage/3600)
@@ -219,7 +223,7 @@ class Adversary(object):
             logging.info("\t %s has too many guards of its own for thugs", guard.nickname)
             return -1
 
-        time_to_pwnage = 60*60*24*7 + 60*60*24*14 * float(roll)
+        time_to_pwnage = 60*60*24*7 + 60*60*24*14 * 2* float(roll)
 
         logging.info("\t %s will get pwned in %d hours",
                      guard.nickname, time_to_pwnage/3600)
